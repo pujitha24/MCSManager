@@ -78,6 +78,14 @@ describe("StorageSubsystem.store atomicity", () => {
   });
 });
 
+describe("StorageSubsystem.store permissions", () => {
+  it.skipIf(process.platform === "win32")("creates the file readable by the owner only", () => {
+    StorageSubsystem.store("dummy_category", "secret-uuid", { name: "secret" });
+    const mode = fs.statSync(path.join(tmpDir, "data", "dummy_category", "secret-uuid.json")).mode;
+    expect(mode & 0o777).toBe(0o600);
+  });
+});
+
 describe("StorageSubsystem.list", () => {
   it("only returns identifiers for JSON files", () => {
     const dirPath = path.join(tmpDir, "data", "dummy_category");

@@ -52,7 +52,8 @@ export default class StorageSubsystem {
     const filePath = path.join(dirPath, `${uuid}.json`);
     const tmpPath = `${filePath}.tmp`;
     const data = JSON.stringify(object, null, 4);
-    fs.writeFileSync(tmpPath, data, { encoding: "utf-8" });
+    // Owner-only: these files may hold secrets (node keys, user apiKey, password hashes).
+    fs.writeFileSync(tmpPath, data, { encoding: "utf-8", mode: 0o600 });
     fs.renameSync(tmpPath, filePath);
   }
 
